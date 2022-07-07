@@ -47,16 +47,35 @@ namespace BusBoard
             return null;
         }
         
-        static async Task Main()
+        static async Task<string> LatLongToAtCode(string lat, string lon)
         {
-            string postCode =  GetPostCode();
-            var dic = await Post2LatLong(postCode);
-            Console.WriteLine(dic["long"]);
-            /*// Call asynchronous network methods in a try/catch block to handle exceptions.
             try
             {
-                string stopcode = "0500CCITY436";
-                HttpResponseMessage response = await client.GetAsync($"https://transportapi.com/v3/uk/bus/stop/{stopcode}/live.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&group=no&limit=5&nextbuses=yes");
+                // Make API call
+                HttpResponseMessage response = await client.GetAsync($"https://transportapi.com/v3/uk/places.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&lat={lat}&lon={lon}&type=bus_stop");
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Access to places API: " + response.StatusCode.ToString());
+                
+                // Deserialize JSON
+                PlacesResponse placesResponse = JsonConvert.DeserializeObject<PlacesResponse>(responseBody);
+                return placesResponse.member[0]["atcocode"];
+            }
+            catch(HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");	
+                Console.WriteLine("Message :{0} ",e.Message);
+            }
+
+            return null;
+        }
+
+        static async Task<object> AtcocodeToBuses(string atcocode)
+        {
+            // Call asynchronous network methods in a try/catch block to handle exceptions.
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync($"https://transportapi.com/v3/uk/bus/stop/{atcocode}/live.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&group=no&limit=5&nextbuses=yes");
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
                 // Above three lines can be replaced with new helper method below
@@ -73,14 +92,24 @@ namespace BusBoard
                     Console.WriteLine(bestDepEst.TimeOfDay);
                 }
 
-
-
+                return new object();
             }
             catch(HttpRequestException e)
             {
                 Console.WriteLine("\nException Caught!");	
                 Console.WriteLine("Message :{0} ",e.Message);
-            }*/
+            }
+
+            return new object();
+        }
+        
+        static async Task Main()
+        {
+            string postCode =  GetPostCode();
+            var dic = await Post2LatLong(postCode);
+            Console.WriteLine(dic["long"]);
+            var atcocode = await LatLongToAtCode(dic["lat"], dic["long"]);
+            var _ = await AtcocodeToBuses(atcocode);
         }
     }
 
@@ -128,6 +157,11 @@ namespace BusBoard
     {
         [JsonProperty("result")]
         public Dictionary<string,object> res { get; set; }
+    }
+    
+    public class PlacesResponse
+    {
+        public List<Dictionary<string, string>> member { get; set; }
     }
 
     /*public class LatLong
