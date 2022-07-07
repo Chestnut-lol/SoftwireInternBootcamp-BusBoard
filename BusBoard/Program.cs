@@ -5,16 +5,58 @@ using Newtonsoft.Json;
 
 namespace BusBoard
 {
+
     class Program
     {
         static readonly HttpClient client = new HttpClient();
 
+        static string GetPostCode()
+        {
+            //Console.WriteLine("Please enter your postcode: ");
+            //return Console.ReadLine().Replace(" ","");
+            return "cb11dx";
+        }
+
+        static async Task<Dictionary<string,string>> Post2LatLong(string postCode)
+        {
+            try
+            {
+                // Make API call
+                HttpResponseMessage response = await client.GetAsync($"http://api.postcodes.io/postcodes/{postCode}");
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Access to postcode API: " + response.StatusCode.ToString());
+                
+                // Deserialize JSON
+                PostCodeResponse postCodeResponse = JsonConvert.DeserializeObject<PostCodeResponse>(responseBody);
+                string lat = postCodeResponse.res["latitude"].ToString();
+                string lon = postCodeResponse.res["longitude"].ToString();
+                return new Dictionary<string, string>()
+                {
+                    { "long", lon },
+                    { "lat", lat },
+                };
+
+            }
+            catch(HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");	
+                Console.WriteLine("Message :{0} ",e.Message);
+            }
+
+            return null;
+        }
+        
         static async Task Main()
         {
-            // Call asynchronous network methods in a try/catch block to handle exceptions.
-            try	
+            string postCode =  GetPostCode();
+            var dic = await Post2LatLong(postCode);
+            Console.WriteLine(dic["long"]);
+            /*// Call asynchronous network methods in a try/catch block to handle exceptions.
+            try
             {
-                HttpResponseMessage response = await client.GetAsync($"https://transportapi.com/v3/uk/bus/stop/0500CCITY436/live.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&group=no&limit=5&nextbuses=yes");
+                string stopcode = "0500CCITY436";
+                HttpResponseMessage response = await client.GetAsync($"https://transportapi.com/v3/uk/bus/stop/{stopcode}/live.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&group=no&limit=5&nextbuses=yes");
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
                 // Above three lines can be replaced with new helper method below
@@ -38,7 +80,7 @@ namespace BusBoard
             {
                 Console.WriteLine("\nException Caught!");	
                 Console.WriteLine("Message :{0} ",e.Message);
-            }
+            }*/
         }
     }
 
@@ -81,6 +123,23 @@ namespace BusBoard
         public string opName { get; set; }
         public string id { get; set; }
     }
+
+    public class PostCodeResponse
+    {
+        [JsonProperty("result")]
+        public Dictionary<string,object> res { get; set; }
+    }
+
+    /*public class LatLong
+    {
+        public string Lat { get; set; }
+
+        public LatLong(string responseBody)
+        {
+            
+        }
+
+    }*/
     
 
 
