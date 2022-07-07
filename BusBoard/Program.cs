@@ -12,9 +12,8 @@ namespace BusBoard
 
         static string GetPostCode()
         {
-            //Console.WriteLine("Please enter your postcode: ");
-            //return Console.ReadLine().Replace(" ","");
-            return "cb11dx";
+            Console.WriteLine("Please enter your postcode: ");
+            return Console.ReadLine().Replace(" ","");
         }
 
         static async Task<Dictionary<string,string>> Post2LatLong(string postCode)
@@ -84,6 +83,11 @@ namespace BusBoard
                 Console.WriteLine(response.StatusCode);
 
                 BusLiveResponse liveResponse = JsonConvert.DeserializeObject<BusLiveResponse>(responseBody);
+                if (!liveResponse.departures.ContainsKey("all"))
+                {
+                    Console.WriteLine("No departure... :(");
+                    return new object();
+                }
                 var dep = liveResponse.departures["all"];
                 foreach (var bus in dep)
                 {
@@ -163,18 +167,6 @@ namespace BusBoard
     {
         public List<Dictionary<string, string>> member { get; set; }
     }
-
-    /*public class LatLong
-    {
-        public string Lat { get; set; }
-
-        public LatLong(string responseBody)
-        {
-            
-        }
-
-    }*/
     
-
 
 }
