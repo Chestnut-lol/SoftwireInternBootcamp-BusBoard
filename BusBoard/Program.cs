@@ -2,8 +2,6 @@
 {
     class Program
     {
-        static readonly HttpClient client = new HttpClient();
-
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to BusBoard!");
