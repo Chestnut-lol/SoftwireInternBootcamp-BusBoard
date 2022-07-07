@@ -15,96 +15,80 @@ namespace BusBoard
             Console.WriteLine("Please enter your postcode: ");
             return Console.ReadLine().Replace(" ","");
         }
-
+        
         static async Task<Dictionary<string,string>> Post2LatLong(string postCode)
         {
-            try
+            // Make API call
+            string uri = $"http://api.postcodes.io/postcodes/{postCode}";
+            string responseBody = await MakeApiReq(uri, "Access to postcode API");
+           
+            // Deserialize JSON
+            PostCodeResponse postCodeResponse = JsonConvert.DeserializeObject<PostCodeResponse>(responseBody);
+            string lat = postCodeResponse.res["latitude"].ToString();
+            string lon = postCodeResponse.res["longitude"].ToString();
+            return new Dictionary<string, string>()
             {
-                // Make API call
-                HttpResponseMessage response = await client.GetAsync($"http://api.postcodes.io/postcodes/{postCode}");
-                response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("Access to postcode API: " + response.StatusCode.ToString());
-                
-                // Deserialize JSON
-                PostCodeResponse postCodeResponse = JsonConvert.DeserializeObject<PostCodeResponse>(responseBody);
-                string lat = postCodeResponse.res["latitude"].ToString();
-                string lon = postCodeResponse.res["longitude"].ToString();
-                return new Dictionary<string, string>()
-                {
-                    { "long", lon },
-                    { "lat", lat },
-                };
-
-            }
-            catch(HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");	
-                Console.WriteLine("Message :{0} ",e.Message);
-            }
-
-            return null;
+                { "long", lon },
+                { "lat", lat },
+            };
         }
         
         static async Task<string> LatLongToAtCode(string lat, string lon)
         {
-            try
-            {
-                // Make API call
-                HttpResponseMessage response = await client.GetAsync($"https://transportapi.com/v3/uk/places.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&lat={lat}&lon={lon}&type=bus_stop");
-                response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("Access to places API: " + response.StatusCode.ToString());
-                
-                // Deserialize JSON
-                PlacesResponse placesResponse = JsonConvert.DeserializeObject<PlacesResponse>(responseBody);
-                return placesResponse.member[0]["atcocode"];
-            }
-            catch(HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");	
-                Console.WriteLine("Message :{0} ",e.Message);
-            }
-
-            return null;
+            
+            // Make API call
+            string uri =
+                $"https://transportapi.com/v3/uk/places.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&lat={lat}&lon={lon}&type=bus_stop";
+            string responseBody = await MakeApiReq(uri, "Access to places API");
+            
+            // Deserialize JSON
+            PlacesResponse placesResponse = JsonConvert.DeserializeObject<PlacesResponse>(responseBody);
+            return placesResponse.member[0]["atcocode"];
+            
         }
 
-        static async Task<object> AtcocodeToBuses(string atcocode)
+        static async Task<string> MakeApiReq(string uri, string successMsg)
         {
-            // Call asynchronous network methods in a try/catch block to handle exceptions.
+            string responseBody = "";
             try
             {
-                HttpResponseMessage response = await client.GetAsync($"https://transportapi.com/v3/uk/bus/stop/{atcocode}/live.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&group=no&limit=5&nextbuses=yes");
+                HttpResponseMessage response = await client.GetAsync(uri);
                 response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-                // Above three lines can be replaced with new helper method below
-                // string responseBody = await client.GetStringAsync(uri);
-
-                Console.WriteLine(response.StatusCode);
-
-                BusLiveResponse liveResponse = JsonConvert.DeserializeObject<BusLiveResponse>(responseBody);
-                if (!liveResponse.departures.ContainsKey("all"))
-                {
-                    Console.WriteLine("No departure... :(");
-                    return new object();
-                }
-                var dep = liveResponse.departures["all"];
-                foreach (var bus in dep)
-                {
-                    string time = bus.bestDepEst;
-                    DateTime.TryParse(time, out DateTime bestDepEst);
-                    Console.WriteLine(bestDepEst.TimeOfDay);
-                }
-
-                return new object();
+                responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(successMsg + ": " + response.StatusCode);
             }
             catch(HttpRequestException e)
             {
                 Console.WriteLine("\nException Caught!");	
                 Console.WriteLine("Message :{0} ",e.Message);
+            }
+
+            return responseBody;
+        }
+
+        
+        static async Task<object> AtcocodeToBuses(string atcocode)
+        {
+            string uri =
+                $"https://transportapi.com/v3/uk/bus/stop/{atcocode}/live.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&group=no&limit=5&nextbuses=yes";
+            string responseBody = await MakeApiReq(uri, "Access to buses");
+            
+            BusLiveResponse liveResponse = JsonConvert.DeserializeObject<BusLiveResponse>(responseBody);
+            if (!liveResponse.departures.ContainsKey("all"))
+            {
+                Console.WriteLine("No departure... :(");
+                return new object();
+            }
+            var dep = liveResponse.departures["all"];
+            foreach (var bus in dep)
+            {
+                string time = bus.bestDepEst;
+                DateTime.TryParse(time, out DateTime bestDepEst);
+                Console.WriteLine(bestDepEst.TimeOfDay);
             }
 
             return new object();
+            
         }
         
         static async Task Main()
