@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BusBoard.JSON_Classes;
+using Newtonsoft.Json;
 
 namespace BusBoard;
 
@@ -57,28 +58,13 @@ public class APIHandler
         }
 
         
-        public static async Task<object> AtcocodeToBuses(string atcocode)
+        public static async Task<Dictionary<string, List<Bus>>> AtcocodeToBusDepart(string atcocode)
         {
             string uri =
                 $"https://transportapi.com/v3/uk/bus/stop/{atcocode}/live.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&group=no&limit=5&nextbuses=yes";
             string responseBody = await MakeApiReq(uri, "Access to buses");
             
             BusLiveResponse liveResponse = JsonConvert.DeserializeObject<BusLiveResponse>(responseBody);
-            if (!liveResponse.departures.ContainsKey("all"))
-            {
-                Console.WriteLine("No departure... :(");
-                return new object();
-            }
-            var dep = liveResponse.departures["all"];
-            foreach (var bus in dep)
-            {
-                string time = bus.bestDepEst;
-                DateTime.TryParse(time, out DateTime bestDepEst);
-                Console.WriteLine(bestDepEst.TimeOfDay);
-            }
-
-            return new object();
-            
+            return liveResponse.departures;
         }
-        
 }
