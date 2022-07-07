@@ -24,9 +24,8 @@ public class APIHandler
             };
         }
         
-        public static async Task<string> LatLongToAtCode(string lat, string lon)
+        public static async Task<string> LatLongToAtCode(string lat, string lon, int countAway = 0)
         {
-            
             // Make API call
             string uri =
                 $"https://transportapi.com/v3/uk/places.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&lat={lat}&lon={lon}&type=bus_stop";
@@ -34,7 +33,7 @@ public class APIHandler
             
             // Deserialize JSON
             PlacesResponse placesResponse = JsonConvert.DeserializeObject<PlacesResponse>(responseBody);
-            return placesResponse.member[0]["atcocode"];
+            return placesResponse.member[countAway]["atcocode"];
             
         }
 

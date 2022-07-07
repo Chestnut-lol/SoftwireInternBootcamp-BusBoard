@@ -9,12 +9,6 @@ namespace BusBoard
 
     class Program
     {
-        static string GetPostCode()
-        {
-            Console.WriteLine("Please enter your postcode: ");
-            return Console.ReadLine().Replace(" ","");
-        }
-
         static async Task Main()
         {
             string postCode =  GetPostCode();
@@ -23,7 +17,18 @@ namespace BusBoard
             var atcocode = await APIHandler.LatLongToAtCode(dic["lat"], dic["long"]);
             var dep = await APIHandler.AtcocodeToBusDepart(atcocode);
             PrintDepartures(dep);
+            atcocode = await APIHandler.LatLongToAtCode(dic["lat"], dic["long"], 1);
+            dep = await APIHandler.AtcocodeToBusDepart(atcocode);
+            PrintDepartures(dep);
         }
+        
+        static string GetPostCode()
+        {
+            Console.WriteLine("Please enter your postcode: ");
+            return Console.ReadLine().Replace(" ","");
+        }
+
+
         private static void PrintDepartures(Dictionary<string, List<Bus>> departures)
         {
             if (!departures.ContainsKey("all"))
@@ -35,9 +40,11 @@ namespace BusBoard
                 var dep = departures["all"];
                 foreach (var bus in dep)
                 {
-                    string time = bus.bestDepEst;
-                    DateTime.TryParse(time, out DateTime bestDepEst);
-                    Console.WriteLine(bestDepEst.TimeOfDay);
+                    //string time = bus.bestDepEst;
+                    //DateTime.TryParse(time, out DateTime bestDepEst);
+                    Console.Write(bus.bestDepEst+" ");
+                    Console.Write(bus.lineName);
+                    Console.WriteLine(bus.direction);
                 }
             }
         }
