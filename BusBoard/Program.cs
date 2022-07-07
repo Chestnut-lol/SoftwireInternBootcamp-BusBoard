@@ -5,16 +5,37 @@ using Newtonsoft.Json;
 
 namespace BusBoard
 {
+    class Interface
+    {
+        public static string EnterAtcocode()
+        {
+            Console.WriteLine("Please enter atcocode: ");
+            return CheckAtcocode(Console.ReadLine());
+        }
+
+        private static string CheckAtcocode(string atcocode)
+        {
+            return atcocode;
+        }
+    }
     class Program
     {
         static readonly HttpClient client = new HttpClient();
 
-        static async Task Main()
+        static void Main(string[] args)
+        {
+            string atcocode = Interface.EnterAtcocode();
+            int n = 5;
+            GetNextNBuses(atcocode,5);
+
+        }
+        
+        static async void GetNextNBuses(string atcocode, int n)
         {
             // Call asynchronous network methods in a try/catch block to handle exceptions.
             try	
             {
-                HttpResponseMessage response = await client.GetAsync($"https://transportapi.com/v3/uk/bus/stop/0500CCITY436/live.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&group=no&limit=5&nextbuses=yes");
+                HttpResponseMessage response = await client.GetAsync($"https://transportapi.com/v3/uk/bus/stop/{atcocode}/live.json?app_id={Credentials.appId}&app_key={Credentials.appKey}&group=no&limit={n.ToString()}&nextbuses=yes");
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
                 // Above three lines can be replaced with new helper method below
