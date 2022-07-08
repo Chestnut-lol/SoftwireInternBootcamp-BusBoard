@@ -15,8 +15,18 @@ public class APIHandler
            
             // Deserialize JSON
             PostCodeResponse postCodeResponse = JsonConvert.DeserializeObject<PostCodeResponse>(responseBody);
-            string lat = postCodeResponse.res["latitude"].ToString();
-            string lon = postCodeResponse.res["longitude"].ToString();
+            string lat;
+            string lon;
+            try
+            {
+                lat = postCodeResponse.res["latitude"].ToString();
+                lon = postCodeResponse.res["longitude"].ToString();
+            }
+            catch
+            {
+                return new Dictionary<string, string>();
+            }
+            
             return new Dictionary<string, string>()
             {
                 { "long", lon },

@@ -27,6 +27,10 @@ public class HomeController : Controller
         // Then modify the view (in Views/Home/BusInfo.cshtml) to render upcoming buses.
 
         var latlong = (await APIHandler.Post2LatLong(selection.Postcode));
+        if (!latlong.ContainsKey("lat"))
+        {
+            return RedirectToAction(nameof(Index));
+        }
         List<Stop> stops = new List<Stop>();
         for (int i = 0; i < 2; i++)
         {
@@ -44,7 +48,6 @@ public class HomeController : Controller
                     stops.Add(stop);
 
                 }
-                
             }
             
         }

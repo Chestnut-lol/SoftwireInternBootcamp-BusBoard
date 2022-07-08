@@ -1,4 +1,6 @@
-﻿namespace BusBoard.Web.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BusBoard.Web.Models
 {
     public class PostcodeSelection
     {
