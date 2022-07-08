@@ -9,38 +9,45 @@
 <div class="row">
   <p>You entered postcode @Model.Postcode</p>
   <p>The two closest bus stops to this postcode is @Model.Stops[0].Name and @Model.Stops[1].Name </p>
-  <p>Your distance to  @Model.Stops[0].Name is @Model.Stops[0].Distance </p>
-  <p>Your distance to  @Model.Stops[1].Name is @Model.Stops[1].Distance </p>
-  <table style="width:90%">
-      <tr>
-        <th>Line Number</th>
-        <th>Destination</th>
-        <th>Estimated Departure Time</th>
-      </tr>
-      @{
-        foreach (var bus in Model.Stops[0].BusList)
-        {
-          <tr>
-            <td>@bus.lineName</td>
-            <td>@bus.direction</td>
-            <td>@bus.bestDepEst</td>
-          </tr>
+  <p>Your distance to  @Model.Stops[0].Name is @Model.Stops[0].Distance meters</p>
+  <p>Your distance to  @Model.Stops[1].Name is @Model.Stops[1].Distance meters</p>
+  <h3>@Model.Stops[0].Name</h3>
+  <table style="width:100%">
+    <tr>
+      <th>Line Number</th>
+      <th>Destination</th>
+      <th>Estimated Departure Time</th>
+    </tr>
+    @{
+      foreach (var bus in Model.Stops[0].BusList)
+      {
+        <tr>
+          <td>@bus.lineName</td>
+          <td>@bus.direction</td>
+          <td>@bus.bestDepEst</td>
+        </tr>
+      }
+    }
+  </table>
+  <p>
+    
+  </p>
+  <h3>@Model.Stops[1].Name</h3>
+    <table style="width:100%">
+        <tr>
+          <th>Line Number</th>
+          <th>Destination</th>
+          <th>Estimated Departure Time</th>
+        </tr>
+        @{
+          foreach (var bus in Model.Stops[1].BusList)
+          {
+            <tr>
+              <td>@bus.lineName</td>
+              <td>@bus.direction</td>
+              <td>@bus.bestDepEst</td>
+            </tr>
+          }
         }
-      }@*
-      <tr>
-        <td>@Model.Stops[0].BusList[0].lineName</td>
-        <td>@Model.Stops[0].BusList[0].direction</td>
-        <td>@Model.Stops[0].BusList[0].bestDepEst</td>
-      </tr>*@
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-    </table>
+      </table>
 </div>
