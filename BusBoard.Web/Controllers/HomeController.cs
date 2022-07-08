@@ -1,4 +1,5 @@
 ﻿using BusBoard.Api;
+using BusBoard.Api.JSON_Classes;
 using Microsoft.AspNetCore.Mvc;
 using BusBoard.Web.Models;
 using BusBoard.Web.ViewModels;
@@ -39,7 +40,8 @@ public class HomeController : Controller
             {
                 if (!departures.ContainsKey("all"))
                 {
-                    Console.WriteLine("No departure... :(");
+                    Stop stop = new Stop(stopDic["name"], stopDic["distance"],stopDic["atcocode"], new List<Bus>());
+                    stops.Add(stop);
                 }
                 else
                 {
@@ -49,7 +51,6 @@ public class HomeController : Controller
 
                 }
             }
-            
         }
         var info = new BusInfo(selection.Postcode, stops);
         return View(info);
