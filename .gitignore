@@ -32,4 +32,8 @@ _UpgradeReport_Files/
 Thumbs.db
 Desktop.ini
 .DS_Store
+<<<<<<< HEAD
 Credentials.cs
+=======
+**/appsettings.Development.json
+>>>>>>> origin/WebFramework
