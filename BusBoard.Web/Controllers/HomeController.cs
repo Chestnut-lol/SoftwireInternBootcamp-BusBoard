@@ -19,6 +19,10 @@ public class HomeController : Controller
     {
         return View();
     }
+    public IActionResult IndexRetry()
+    {
+        return View();
+    }
 
     [HttpGet]
     public async Task<ActionResult> BusInfo(PostcodeSelection selection)
@@ -30,7 +34,7 @@ public class HomeController : Controller
         var latlong = (await APIHandler.Post2LatLong(selection.Postcode));
         if (!latlong.ContainsKey("lat"))
         {
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexRetry));
         }
         List<Stop> stops = new List<Stop>();
         for (int i = 0; i < 2; i++)
