@@ -1,4 +1,4 @@
-﻿namespace BusBoard.JSON_Classes;
+﻿namespace BusBoard.Api.JSON_Classes;
 
 public class BusLiveResponse
 {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BusBoard.Api;
+using Microsoft.AspNetCore.Mvc;
 using BusBoard.Web.Models;
 using BusBoard.Web.ViewModels;
 
@@ -19,12 +20,13 @@ public class HomeController : Controller
     }
 
     [HttpGet]
-    public ActionResult BusInfo(PostcodeSelection selection)
+    public async Task<ActionResult> BusInfo(PostcodeSelection selection)
     {
         // Add some properties to the BusInfo view model with the data you want to render on the page.
         // Write code here to populate the view model with info from the APIs.
         // Then modify the view (in Views/Home/BusInfo.cshtml) to render upcoming buses.
-        var info = new BusInfo(selection.Postcode);
+        var info = new BusInfo(selection.Postcode, await APIHandler.Post2LatLong(selection.Postcode));
+        
         return View(info);
     }
 

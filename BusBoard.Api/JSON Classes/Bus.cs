@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BusBoard.JSON_Classes;
+namespace BusBoard.Api.JSON_Classes;
 
 public class Bus
 {

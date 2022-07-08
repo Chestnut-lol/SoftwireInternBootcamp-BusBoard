@@ -1,7 +1,7 @@
-﻿using BusBoard.JSON_Classes;
+﻿using BusBoard.Api.JSON_Classes;
 using Newtonsoft.Json;
 
-namespace BusBoard;
+namespace BusBoard.Api;
 
 public class APIHandler
 {
