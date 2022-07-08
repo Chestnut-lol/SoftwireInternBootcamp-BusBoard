@@ -9,45 +9,27 @@
 <div class="row">
   <p>You entered postcode @Model.Postcode</p>
   <p>The two closest bus stops to this postcode is @Model.Stops[0].Name and @Model.Stops[1].Name </p>
-  <p>Your distance to  @Model.Stops[0].Name is @Model.Stops[0].Distance meters</p>
-  <p>Your distance to  @Model.Stops[1].Name is @Model.Stops[1].Distance meters</p>
-  <h3>@Model.Stops[0].Name</h3>
-  <table style="width:100%">
-    <tr>
-      <th>Line Number</th>
-      <th>Destination</th>
-      <th>Estimated Departure Time</th>
-    </tr>
-    @{
-      foreach (var bus in Model.Stops[0].BusList)
-      {
-        <tr>
-          <td>@bus.lineName</td>
-          <td>@bus.direction</td>
-          <td>@bus.bestDepEst</td>
-        </tr>
-      }
-    }
-  </table>
-  <p>
-    
-  </p>
-  <h3>@Model.Stops[1].Name</h3>
+  @foreach (var stop in Model.Stops)
+  {
+    <h3>@stop.Name</h3>
+    <h5>(@stop.Distance metres away)</h5>
     <table style="width:100%">
-        <tr>
-          <th>Line Number</th>
-          <th>Destination</th>
-          <th>Estimated Departure Time</th>
-        </tr>
-        @{
-          foreach (var bus in Model.Stops[1].BusList)
-          {
-            <tr>
-              <td>@bus.lineName</td>
-              <td>@bus.direction</td>
-              <td>@bus.bestDepEst</td>
-            </tr>
-          }
+      <tr>
+        <th>Line Number</th>
+        <th>Destination</th>
+        <th>Estimated Departure Time</th>
+      </tr>
+      @{
+        foreach (var bus in stop.BusList)
+        {
+          <tr>
+            <td>@bus.lineName</td>
+            <td>@bus.direction</td>
+            <td>@bus.bestDepEst</td>
+          </tr>
         }
-      </table>
+      }
+    </table>
+    <p></p>
+  }
 </div>
