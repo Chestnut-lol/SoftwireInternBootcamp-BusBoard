@@ -1,15 +1,19 @@
-﻿namespace BusBoard.Web.ViewModels
+﻿using BusBoard.Api.JSON_Classes;
+using BusBoard.Web.Models;
+using Microsoft.VisualBasic.CompilerServices;
+
+namespace BusBoard.Web.ViewModels
 {
     public class BusInfo
     {
-        public BusInfo(string postCode, Dictionary<string, string> latlong)
+        public BusInfo(string postcode, List<Stop> stops)
         {
-            PostCode = postCode;
-            LatLong = latlong;
+            Postcode = postcode;
+            Stops = stops;
         }
-        public string Stop { get; set; } 
-        public Dictionary<string, string> LatLong { get; set; }
-        public string PostCode { get; set; }
+        public string Postcode { get; set; }
+        public List<Stop> Stops { get; set; }
+
 
     }
 }

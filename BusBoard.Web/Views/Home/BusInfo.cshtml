@@ -1,4 +1,5 @@
 ﻿@model BusBoard.Web.ViewModels.BusInfo
+
 @{
   ViewBag.Title = "Bus Information";
 }
@@ -6,6 +7,41 @@
 <h2>BusInfo</h2>
 
 <div class="row">
-    <p>You entered postcode @Model.PostCode</p>
-    <p>This postcode is at @Model.LatLong["lat"] and @Model.LatLong["long"]</p>
+    <p>You entered postcode @Model.Postcode</p>
+  <p>The two closest bus stops to this postcode is @Model.Stops[0].Name and @Model.Stops[1].Name </p>
+  <p>Your distance to  @Model.Stops[0].Name is @Model.Stops[0].Distance </p>
+  <p>Your distance to  @Model.Stops[1].Name is @Model.Stops[1].Distance </p>
+    
+    <table style="width:100%">
+      <tr>
+        <th>Line Number</th>
+        <th>Destination</th>
+        <th>Estimated Departure Time</th>
+      </tr>
+      @{
+        foreach (var bus in Model.Stops[0].BusList)
+        {
+          <tr>
+            <td>@bus.lineName</td>
+            <td>@bus.direction</td>
+            <td>@bus.bestDepEst</td>
+          </tr>
+        }
+      }@*
+      <tr>
+        <td>@Model.Stops[0].BusList[0].lineName</td>
+        <td>@Model.Stops[0].BusList[0].direction</td>
+        <td>@Model.Stops[0].BusList[0].bestDepEst</td>
+      </tr>*@
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
 </div>

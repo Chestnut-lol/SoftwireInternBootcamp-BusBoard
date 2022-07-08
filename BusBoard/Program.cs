@@ -3,7 +3,6 @@ using System.Net.Mail;
 using System.Runtime.InteropServices;
 using BusBoard.Api.JSON_Classes;
 using BusBoard.Api;
-using Newtonsoft.Json;
 
 namespace BusBoard
 {
