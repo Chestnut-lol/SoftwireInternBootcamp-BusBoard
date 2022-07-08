@@ -14,14 +14,23 @@ namespace BusBoard
             string postCode =  GetPostCode();
             var dic = await APIHandler.Post2LatLong(postCode);
             Console.WriteLine(dic["long"]);
-            var atcocode = await APIHandler.LatLongToAtCode(dic["lat"], dic["long"]);
+            Dictionary<string,string> stops;
+            for (int i = 0; i < 2; i++)
+            {
+                stops = (await APIHandler.LatLongToStop(dic["lat"], dic["long"], i));
+                await StopToPrintBoard(stops);
+            }
+        }
+
+        private static async Task StopToPrintBoard(Dictionary<string, string> stop)
+        {
+            var atcocode = stop["atcocode"];
+            Console.WriteLine(stop["name"]);
             var dep = await APIHandler.AtcocodeToBusDepart(atcocode);
             PrintDepartures(dep);
-            atcocode = await APIHandler.LatLongToAtCode(dic["lat"], dic["long"], 1);
-            dep = await APIHandler.AtcocodeToBusDepart(atcocode);
-            PrintDepartures(dep);
         }
-        
+
+
         static string GetPostCode()
         {
             Console.WriteLine("Please enter your postcode: ");
@@ -43,7 +52,7 @@ namespace BusBoard
                     //string time = bus.bestDepEst;
                     //DateTime.TryParse(time, out DateTime bestDepEst);
                     Console.Write(bus.bestDepEst+" ");
-                    Console.Write(bus.lineName);
+                    Console.Write(bus.lineName + " ");
                     Console.WriteLine(bus.direction);
                 }
             }

@@ -24,7 +24,7 @@ public class APIHandler
             };
         }
         
-        public static async Task<string> LatLongToAtCode(string lat, string lon, int countAway = 0)
+        public static async Task<Dictionary<string, string>> LatLongToStop(string lat, string lon, int countAway = 0)
         {
             // Make API call
             string uri =
@@ -33,8 +33,7 @@ public class APIHandler
             
             // Deserialize JSON
             PlacesResponse placesResponse = JsonConvert.DeserializeObject<PlacesResponse>(responseBody);
-            return placesResponse.member[countAway]["atcocode"];
-            
+            return placesResponse.member[countAway];
         }
 
         private static async Task<string> MakeApiReq(string uri, string successMsg)

@@ -6,6 +6,7 @@ public class Bus
 {
     public string mode { get; set; }
     public string line { get; set; }
+    [JsonProperty("line_name")]
     public string lineName { get; set; }
     public string direction { get; set; }
     [JsonProperty("operator")]
