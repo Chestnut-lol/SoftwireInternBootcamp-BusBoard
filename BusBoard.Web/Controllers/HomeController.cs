@@ -30,6 +30,10 @@ public class HomeController : Controller
         // Add some properties to the BusInfo view model with the data you want to render on the page.
         // Write code here to populate the view model with info from the APIs.
         // Then modify the view (in Views/Home/BusInfo.cshtml) to render upcoming buses.
+        if (!int.TryParse(selection.StopCount,out int cnt))
+        {
+            return RedirectToAction(nameof(IndexRetry));
+        }
 
         var latlong = (await APIHandler.Post2LatLong(selection.Postcode));
         if (!latlong.ContainsKey("lat"))
@@ -37,7 +41,7 @@ public class HomeController : Controller
             return RedirectToAction(nameof(IndexRetry));
         }
         List<Stop> stops = new List<Stop>();
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < cnt; i++)
         {
             var stopDic = (await APIHandler.LatLongToStop(latlong["lat"], latlong["long"], i));
             var departures = await APIHandler.AtcocodeToBusDepart(stopDic["atcocode"]);

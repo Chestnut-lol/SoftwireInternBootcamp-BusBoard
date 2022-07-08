@@ -7,8 +7,7 @@
 <h2>BusInfo</h2>
 
 <div class="row">
-  <p>You entered postcode @Model.Postcode</p>
-  <p>The two closest bus stops to this postcode is @Model.Stops[0].Name and @Model.Stops[1].Name </p>
+  <p>You entered postcode @Model.Postcode.ToUpper().Insert(Model.Postcode.Length-3, " "). Showing the @Model.Stops.Count closest stops.</p>
   @foreach (var stop in Model.Stops)
   {
     <h3>@stop.Name</h3>
@@ -32,4 +31,5 @@
     </table>
     <p></p>
   }
+  
 </div>
